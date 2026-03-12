@@ -12,7 +12,7 @@ struct HistoryView: View {
                     list
                 }
             }
-            .navigationTitle("历史洞察")
+            .navigationTitle("History")
         }
         .onAppear {
             viewModel.loadFromStorage()
@@ -33,9 +33,9 @@ struct HistoryView: View {
             Image(systemName: "clock.arrow.circlepath")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
-            Text("暂无历史记录")
+            Text("No history yet")
                 .font(.headline)
-            Text("每天的投资洞察会保存在这里")
+            Text("Each day's insight will be saved here.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -61,8 +61,7 @@ struct InsightDetailView: View {
         let inputFormatter = DateFormatter()
         inputFormatter.dateFormat = "yyyy-MM-dd"
         let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "yyyy年M月d日"
-        outputFormatter.locale = Locale(identifier: "zh_CN")
+        outputFormatter.dateFormat = "MMM d, yyyy"
         guard let date = inputFormatter.date(from: dateString) else { return dateString }
         return outputFormatter.string(from: date)
     }

@@ -14,7 +14,7 @@ struct SettingsView: View {
                 linksSection
                 aboutSection
             }
-            .navigationTitle("设置")
+            .navigationTitle("Settings")
         }
     }
 
@@ -28,9 +28,9 @@ struct SettingsView: View {
                 HStack {
                     Group {
                         if showNewsAPIKey {
-                            TextField("粘贴你的 NewsAPI Key", text: $newsAPIKey)
+                            TextField("Paste your NewsAPI Key", text: $newsAPIKey)
                         } else {
-                            SecureField("粘贴你的 NewsAPI Key", text: $newsAPIKey)
+                            SecureField("Paste your NewsAPI Key", text: $newsAPIKey)
                         }
                     }
                     .textInputAutocapitalization(.never)
@@ -43,7 +43,7 @@ struct SettingsView: View {
                     }
                 }
                 if !newsAPIKey.isEmpty {
-                    Label("已配置", systemImage: "checkmark.circle.fill")
+                    Label("Configured", systemImage: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundColor(.green)
                 }
@@ -58,9 +58,9 @@ struct SettingsView: View {
                 HStack {
                     Group {
                         if showClaudeAPIKey {
-                            TextField("粘贴你的 Claude API Key", text: $claudeAPIKey)
+                            TextField("Paste your Claude API Key", text: $claudeAPIKey)
                         } else {
-                            SecureField("粘贴你的 Claude API Key", text: $claudeAPIKey)
+                            SecureField("Paste your Claude API Key", text: $claudeAPIKey)
                         }
                     }
                     .textInputAutocapitalization(.never)
@@ -73,35 +73,36 @@ struct SettingsView: View {
                     }
                 }
                 if !claudeAPIKey.isEmpty {
-                    Label("已配置", systemImage: "checkmark.circle.fill")
+                    Label("Configured", systemImage: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundColor(.green)
                 }
             }
             .padding(.vertical, 4)
         } header: {
-            Text("API 配置")
+            Text("API Configuration")
         } footer: {
-            Text("API Key 仅保存在你的设备本地，不会上传到任何服务器。")
+            Text("Keys are stored locally on your device only and never sent to any third-party server.")
         }
     }
 
     private var linksSection: some View {
-        Section("获取 API Key") {
+        Section("Get API Keys") {
             Link(destination: URL(string: "https://newsapi.org/register")!) {
-                Label("注册 NewsAPI（免费）", systemImage: "arrow.up.right.square")
+                Label("Register for NewsAPI (Free)", systemImage: "arrow.up.right.square")
             }
             Link(destination: URL(string: "https://console.anthropic.com/")!) {
-                Label("获取 Claude API Key", systemImage: "arrow.up.right.square")
+                Label("Get Claude API Key", systemImage: "arrow.up.right.square")
             }
         }
     }
 
     private var aboutSection: some View {
-        Section("关于") {
-            LabeledContent("版本", value: "1.0.0")
-            Link(destination: URL(string: "https://github.com/your-username/DailyInvest")!) {
-                Label("GitHub 开源地址", systemImage: "chevron.left.slash.chevron.right")
+        Section("About") {
+            LabeledContent("Version", value: "1.0.0")
+            LabeledContent("Language", value: "English · 中文")
+            Link(destination: URL(string: "https://github.com/Ody-trek/DailyInvest")!) {
+                Label("View on GitHub", systemImage: "chevron.left.slash.chevron.right")
             }
         }
     }

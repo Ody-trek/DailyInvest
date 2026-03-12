@@ -1,48 +1,48 @@
 # DailyInvest
 
-每天一条最有价值的投资洞察，由 Claude AI 从全球财经新闻中精选并提炼。
+One AI-curated investment insight every day, powered by Claude AI and global financial news.
 
-## 功能
+**English UI · 中文内容同步提供** — The app displays in English by default. Tap the **中文** button on any insight card to switch to the Chinese version.
 
-- **今日洞察**：每天自动从 NewsAPI 抓取财经新闻，由 Claude AI 筛选出最有价值的一条，用中文进行投资解读
-- **历史记录**：查看所有历史洞察，随时回顾
-- **纯本地**：API Key 仅保存在设备本地，数据不经过任何第三方服务器
+## Features
 
-## 截图
+- **Today's Insight** — Automatically fetches financial news via NewsAPI and lets Claude AI select the single most valuable piece for investors, with a concise English summary
+- **中文切换** — Every insight card has a language toggle: tap to read the Chinese title and summary, tap again to return to English
+- **History** — Browse all past insights; each entry shows both the English headline and Chinese title at a glance
+- **Fully local** — API keys are stored only on your device; no data passes through any third-party server
 
-> （运行后截图补充）
+## Screenshots
 
-## 快速开始
+> *(Add after running the app)*
 
-### 前提条件
+## Quick Start
 
-- macOS 13+ 和 Xcode 15+
-- iOS 16+ 设备或模拟器
-- [NewsAPI Key](https://newsapi.org/register)（免费）
+### Prerequisites
+
+- macOS 13+ with Xcode 15+
+- iOS 16+ device or simulator
+- [NewsAPI Key](https://newsapi.org/register) (free tier available)
 - [Claude API Key](https://console.anthropic.com/)
 
-### 安装步骤
+### Setup
 
-1. **克隆仓库**
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/DailyInvest.git
+   git clone https://github.com/Ody-trek/DailyInvest.git
    cd DailyInvest
    ```
 
-2. **在 Xcode 中创建项目**
-   - 打开 Xcode → File → New → Project
-   - 选择 **iOS → App**
-   - Product Name: `DailyInvest`
-   - Interface: **SwiftUI**，Language: **Swift**
-   - 取消勾选 Core Data 和 Tests
+2. **Create an Xcode project**
+   - Open Xcode → File → New → Project
+   - Choose **iOS → App**
+   - Product Name: `DailyInvest`, Interface: **SwiftUI**, Language: **Swift**
+   - Uncheck Core Data and Tests
 
-3. **添加源文件**
-   - 将 `Sources/DailyInvest/` 下的所有 `.swift` 文件拖入 Xcode 项目
-   - 删除 Xcode 自动生成的 `ContentView.swift`（已由本项目提供）
+3. **Add source files**
+   - Drag all `.swift` files from `Sources/DailyInvest/` into Xcode
+   - Delete the default `ContentView.swift` Xcode generated (this repo provides one)
 
-4. **配置 Info.plist**（允许网络请求）
-
-   在 Info.plist 中添加：
+4. **Allow network requests** in `Info.plist`
    ```xml
    <key>NSAppTransportSecurity</key>
    <dict>
@@ -51,61 +51,60 @@
    </dict>
    ```
 
-5. **运行 App**
-   - 选择模拟器或连接真机，点击运行
-   - 进入「设置」页面填写 NewsAPI Key 和 Claude API Key
-   - 返回「今日」页面，点击刷新即可获取今日洞察
+5. **Run** — Open Settings tab, enter your API keys, then tap refresh on Today's tab
 
-## 项目结构
+## Project Structure
 
 ```
 Sources/DailyInvest/
-├── DailyInvestApp.swift          # App 入口
+├── DailyInvestApp.swift          # App entry point
 ├── Models/
-│   ├── InvestInsight.swift       # 洞察数据模型
-│   └── NewsArticle.swift         # NewsAPI 响应模型
+│   ├── InvestInsight.swift       # Bilingual insight model (EN + 中文)
+│   └── NewsArticle.swift         # NewsAPI response model
 ├── Services/
-│   ├── NewsAPIService.swift      # 抓取财经新闻
-│   └── ClaudeAPIService.swift    # Claude AI 筛选提炼
+│   ├── NewsAPIService.swift      # Fetch financial news
+│   └── ClaudeAPIService.swift    # Claude AI: select & summarise in EN + 中文
 ├── ViewModels/
-│   └── InsightViewModel.swift    # 业务逻辑
+│   └── InsightViewModel.swift    # Business logic
 ├── Views/
-│   ├── ContentView.swift         # 主 Tab 容器
-│   ├── TodayView.swift           # 今日洞察页
-│   ├── InsightCardView.swift     # 洞察卡片组件
-│   ├── HistoryView.swift         # 历史记录页
-│   └── SettingsView.swift        # 设置页
+│   ├── ContentView.swift         # Tab container
+│   ├── TodayView.swift           # Today's insight (English UI)
+│   ├── InsightCardView.swift     # Card with EN ↔ 中文 toggle
+│   ├── HistoryView.swift         # Past insights list
+│   └── SettingsView.swift        # API key configuration
 └── Storage/
-    └── InsightStore.swift        # 本地持久化
+    └── InsightStore.swift        # Local JSON persistence
 ```
 
-## 工作原理
+## How It Works
 
 ```
-用户打开 App
+App opens
     ↓
-检查本地是否有今天的洞察
-    ↓ 没有
-调用 NewsAPI 获取最新财经新闻（最多20条）
+Check local storage for today's insight
+    ↓  (not found)
+Fetch up to 20 financial news articles via NewsAPI
     ↓
-将新闻列表发送给 Claude API
-Claude 分析并选出最有投资价值的一条
-返回中文标题 + 投资解读（100-150字）
+Send articles to Claude (claude-opus-4-6)
+Claude picks the most valuable one and returns:
+  • English title + summary
+  • 中文标题 + 投资洞察
     ↓
-保存到本地，展示给用户
+Save locally → display on Today tab
+User can tap 中文 to toggle language on the insight card
 ```
 
-## 技术栈
+## Tech Stack
 
-- **UI**: SwiftUI
-- **网络**: URLSession（原生，无第三方依赖）
-- **存储**: UserDefaults（API Key）+ JSON 文件（历史记录）
-- **AI**: Claude claude-opus-4-6 via Anthropic API
-- **新闻**: NewsAPI
+- **UI**: SwiftUI (iOS 16+)
+- **Networking**: URLSession — no third-party dependencies
+- **Storage**: UserDefaults (API keys) + JSON file (history)
+- **AI**: Claude claude-opus-4-6 via [Anthropic API](https://www.anthropic.com/)
+- **News**: [NewsAPI](https://newsapi.org/)
 
-## 贡献
+## Contributing
 
-欢迎提 Issue 和 PR！
+Issues and PRs are welcome!
 
 ## License
 

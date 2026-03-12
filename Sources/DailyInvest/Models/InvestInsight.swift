@@ -3,8 +3,13 @@ import Foundation
 struct InvestInsight: Codable, Identifiable {
     let id: UUID
     let date: String        // "yyyy-MM-dd"
+    // English content
     let title: String
-    let summary: String     // Claude's distilled insight in Chinese
+    let summary: String
+    // Chinese content
+    let chineseTitle: String
+    let chineseSummary: String
+    // Source
     let originalTitle: String
     let sourceURL: String
     let sourceName: String
@@ -15,6 +20,8 @@ struct InvestInsight: Codable, Identifiable {
         date: String,
         title: String,
         summary: String,
+        chineseTitle: String,
+        chineseSummary: String,
         originalTitle: String,
         sourceURL: String,
         sourceName: String,
@@ -24,6 +31,8 @@ struct InvestInsight: Codable, Identifiable {
         self.date = date
         self.title = title
         self.summary = summary
+        self.chineseTitle = chineseTitle
+        self.chineseSummary = chineseSummary
         self.originalTitle = originalTitle
         self.sourceURL = sourceURL
         self.sourceName = sourceName

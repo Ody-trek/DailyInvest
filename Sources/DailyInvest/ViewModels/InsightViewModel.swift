@@ -26,7 +26,6 @@ class InsightViewModel: ObservableObject {
     }
 
     func fetchTodayInsight() async {
-        // Don't refetch if we already have today's insight
         if todayInsight != nil { return }
         await refresh()
     }
@@ -36,16 +35,18 @@ class InsightViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            loadingStep = "正在获取今日财经新闻..."
+            loadingStep = "Fetching today's financial news..."
             let articles = try await newsService.fetchInvestmentNews(apiKey: newsAPIKey)
 
-            loadingStep = "Claude 正在分析最有价值的内容..."
+            loadingStep = "Claude is selecting the best insight..."
             let curated = try await claudeService.curateInsight(from: articles, apiKey: claudeAPIKey)
 
             let insight = InvestInsight(
                 date: store.todayString(),
-                title: curated.chineseTitle,
-                summary: curated.chineseSummary,
+                title: curated.title,
+                summary: curated.summary,
+                chineseTitle: curated.chineseTitle,
+                chineseSummary: curated.chineseSummary,
                 originalTitle: curated.originalTitle,
                 sourceURL: curated.sourceURL,
                 sourceName: curated.sourceName

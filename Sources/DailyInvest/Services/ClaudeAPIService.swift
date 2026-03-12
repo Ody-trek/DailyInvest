@@ -39,8 +39,9 @@ private struct ClaudeContentBlock: Codable {
     let text: String?
 }
 
-// The structured insight Claude returns
 struct CuratedInsight {
+    let title: String
+    let summary: String
     let chineseTitle: String
     let chineseSummary: String
     let originalTitle: String
@@ -64,18 +65,20 @@ class ClaudeAPIService {
         }.joined(separator: "\n\n")
 
         let prompt = """
-        你是一位资深投资分析师。以下是今天的财经新闻列表：
+        You are a senior investment analyst. Below is today's list of financial news articles:
 
         \(articleList)
 
-        请从中选出**最有投资价值**的一条，并按照以下 JSON 格式回复（只输出 JSON，不要任何其他文字）：
+        Select the single most valuable article for investors and respond ONLY with a JSON object in this exact format (no other text):
 
         {
-          "chineseTitle": "（用中文写一个吸引人的标题，20字以内）",
-          "chineseSummary": "（用中文写100-150字的投资洞察，解释为什么这条信息对投资者重要，以及潜在的投资启示）",
-          "originalTitle": "（原文标题，原样复制）",
-          "sourceURL": "（原文链接，原样复制）",
-          "sourceName": "（来源媒体名称，原样复制）"
+          "title": "(A concise English headline, max 10 words)",
+          "summary": "(100–150 word English investment insight: why this matters to investors and what the implications are)",
+          "chineseTitle": "（中文标题，20字以内）",
+          "chineseSummary": "（中文投资洞察，100-150字，解释为何对投资者重要及潜在启示）",
+          "originalTitle": "(exact original article title)",
+          "sourceURL": "(exact article URL)",
+          "sourceName": "(exact source name)"
         }
         """
 
@@ -109,7 +112,6 @@ class ClaudeAPIService {
     }
 
     private func parseInsightJSON(from text: String) throws -> CuratedInsight {
-        // Extract JSON from the response (Claude may wrap it in markdown code blocks)
         var jsonString = text
         if let start = text.range(of: "{"), let end = text.range(of: "}", options: .backwards) {
             jsonString = String(text[start.lowerBound...end.upperBound])
@@ -117,6 +119,8 @@ class ClaudeAPIService {
 
         guard let data = jsonString.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: String],
+              let title = json["title"],
+              let summary = json["summary"],
               let chineseTitle = json["chineseTitle"],
               let chineseSummary = json["chineseSummary"],
               let originalTitle = json["originalTitle"],
@@ -126,6 +130,8 @@ class ClaudeAPIService {
         }
 
         return CuratedInsight(
+            title: title,
+            summary: summary,
             chineseTitle: chineseTitle,
             chineseSummary: chineseSummary,
             originalTitle: originalTitle,

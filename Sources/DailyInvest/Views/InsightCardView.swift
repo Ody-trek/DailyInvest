@@ -2,23 +2,48 @@ import SwiftUI
 
 struct InsightCardView: View {
     let insight: InvestInsight
-    @State private var showSafari = false
+    @State private var showChinese = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+
+            // Language toggle
+            HStack {
+                Spacer()
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showChinese.toggle()
+                    }
+                } label: {
+                    Label(
+                        showChinese ? "English" : "中文",
+                        systemImage: showChinese ? "textformat.abc" : "character.chinese"
+                    )
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color(.tertiarySystemBackground))
+                    .cornerRadius(20)
+                }
+                .buttonStyle(.plain)
+            }
+
             // Title
-            Text(insight.title)
+            Text(showChinese ? insight.chineseTitle : insight.title)
                 .font(.title2)
                 .fontWeight(.bold)
                 .lineSpacing(4)
+                .animation(.easeInOut, value: showChinese)
 
             Divider()
 
             // Summary
-            Text(insight.summary)
+            Text(showChinese ? insight.chineseSummary : insight.summary)
                 .font(.body)
                 .lineSpacing(6)
                 .foregroundColor(.primary)
+                .animation(.easeInOut, value: showChinese)
 
             Divider()
 
@@ -28,7 +53,7 @@ struct InsightCardView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                Text("原标题：\(insight.originalTitle)")
+                Text("Original: \(insight.originalTitle)")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
@@ -37,12 +62,12 @@ struct InsightCardView: View {
             // Read original button
             if let url = URL(string: insight.sourceURL) {
                 Link(destination: url) {
-                    Label("阅读原文", systemImage: "arrow.up.right.square")
+                    Label("Read Original Article", systemImage: "arrow.up.right.square")
                         .font(.subheadline)
                         .fontWeight(.medium)
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
             }
         }
         .padding(20)
@@ -73,7 +98,11 @@ struct InsightRowView: View {
             Text(insight.summary)
                 .font(.caption)
                 .foregroundColor(.secondary)
-                .lineLimit(3)
+                .lineLimit(2)
+            Text(insight.chineseTitle)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
         }
         .padding(.vertical, 4)
     }
@@ -82,8 +111,7 @@ struct InsightRowView: View {
         let inputFormatter = DateFormatter()
         inputFormatter.dateFormat = "yyyy-MM-dd"
         let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "M月d日"
-        outputFormatter.locale = Locale(identifier: "zh_CN")
+        outputFormatter.dateFormat = "MMM d, yyyy"
         guard let date = inputFormatter.date(from: dateString) else { return dateString }
         return outputFormatter.string(from: date)
     }

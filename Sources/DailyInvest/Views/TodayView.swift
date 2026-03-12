@@ -12,7 +12,7 @@ struct TodayView: View {
                 }
                 .padding()
             }
-            .navigationTitle("今日投资洞察")
+            .navigationTitle("Today's Insight")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     refreshButton
@@ -67,9 +67,9 @@ struct TodayView: View {
             Image(systemName: "key.fill")
                 .font(.system(size: 40))
                 .foregroundColor(.orange)
-            Text("需要配置 API Key")
+            Text("API Keys Required")
                 .font(.headline)
-            Text("请前往「设置」页面填写 NewsAPI 和 Claude API Key")
+            Text("Please go to Settings and enter your NewsAPI and Claude API keys.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -82,13 +82,13 @@ struct TodayView: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 40))
                 .foregroundColor(.red)
-            Text("获取失败")
+            Text("Failed to Load")
                 .font(.headline)
             Text(message)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-            Button("重试") {
+            Button("Retry") {
                 Task { await viewModel.refresh() }
             }
             .buttonStyle(.borderedProminent)
@@ -101,9 +101,9 @@ struct TodayView: View {
             Image(systemName: "newspaper")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
-            Text("今日洞察还未生成")
+            Text("No insight yet for today")
                 .font(.headline)
-            Button("立即获取") {
+            Button("Fetch Now") {
                 Task { await viewModel.refresh() }
             }
             .buttonStyle(.borderedProminent)
@@ -122,8 +122,7 @@ struct TodayView: View {
 
     private var formattedDate: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy年M月d日 EEEE"
-        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "EEEE, MMMM d, yyyy"
         return formatter.string(from: Date())
     }
 }
