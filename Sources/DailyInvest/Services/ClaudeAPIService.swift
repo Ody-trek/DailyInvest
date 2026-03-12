@@ -9,16 +9,15 @@ enum ClaudeAPIError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .missingAPIKey:    return "Claude API key is not set. Please add it in Settings."
-        case .networkError(let e): return "Network error: \(e.localizedDescription)"
-        case .decodingError:    return "Failed to decode Claude's response."
-        case .apiError(let msg): return "Claude API error: \(msg)"
-        case .noInsightGenerated: return "Claude could not generate an insight."
+        case .missingAPIKey:    return "未配置 Claude API Key，请在设置页面填写。"
+        case .networkError(let e): return "网络错误：\(e.localizedDescription)"
+        case .decodingError:    return "解析 Claude 返回内容失败。"
+        case .apiError(let msg): return "Claude API 错误：\(msg)"
+        case .noInsightGenerated: return "Claude 未能生成洞察内容。"
         }
     }
 }
 
-// Minimal Codable types for the Claude Messages API
 private struct ClaudeRequest: Codable {
     let model: String
     let max_tokens: Int
@@ -42,8 +41,6 @@ private struct ClaudeContentBlock: Codable {
 struct CuratedInsight {
     let title: String
     let summary: String
-    let chineseTitle: String
-    let chineseSummary: String
     let originalTitle: String
     let sourceURL: String
     let sourceName: String
@@ -57,28 +54,26 @@ class ClaudeAPIService {
 
         let articleList = articles.prefix(15).enumerated().map { index, article in
             """
-            [\(index + 1)] Title: \(article.title)
-                Source: \(article.source.name)
-                Description: \(article.safeDescription)
-                URL: \(article.url)
+            [\(index + 1)] 标题：\(article.title)
+                来源：\(article.source.name)
+                摘要：\(article.safeDescription)
+                链接：\(article.url)
             """
         }.joined(separator: "\n\n")
 
         let prompt = """
-        You are a senior investment analyst. Below is today's list of financial news articles:
+        你是一位资深投资分析师。以下是今天的财经新闻列表：
 
         \(articleList)
 
-        Select the single most valuable article for investors and respond ONLY with a JSON object in this exact format (no other text):
+        请从中选出**最有投资价值**的一条，并按照以下 JSON 格式回复（只输出 JSON，不要任何其他文字）：
 
         {
-          "title": "(A concise English headline, max 10 words)",
-          "summary": "(100–150 word English investment insight: why this matters to investors and what the implications are)",
-          "chineseTitle": "（中文标题，20字以内）",
-          "chineseSummary": "（中文投资洞察，100-150字，解释为何对投资者重要及潜在启示）",
-          "originalTitle": "(exact original article title)",
-          "sourceURL": "(exact article URL)",
-          "sourceName": "(exact source name)"
+          "title": "（用中文写一个吸引人的标题，20字以内）",
+          "summary": "（用中文写100-150字的投资洞察，解释为什么这条信息对投资者重要，以及潜在的投资启示）",
+          "originalTitle": "（原文标题，原样复制）",
+          "sourceURL": "（原文链接，原样复制）",
+          "sourceName": "（来源媒体名称，原样复制）"
         }
         """
 
@@ -98,7 +93,7 @@ class ClaudeAPIService {
         let (data, response) = try await URLSession.shared.data(for: request)
 
         if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            let errorBody = String(data: data, encoding: .utf8) ?? "Unknown error"
+            let errorBody = String(data: data, encoding: .utf8) ?? "未知错误"
             throw ClaudeAPIError.apiError("HTTP \(httpResponse.statusCode): \(errorBody)")
         }
 
@@ -121,8 +116,6 @@ class ClaudeAPIService {
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: String],
               let title = json["title"],
               let summary = json["summary"],
-              let chineseTitle = json["chineseTitle"],
-              let chineseSummary = json["chineseSummary"],
               let originalTitle = json["originalTitle"],
               let sourceURL = json["sourceURL"],
               let sourceName = json["sourceName"] else {
@@ -132,8 +125,6 @@ class ClaudeAPIService {
         return CuratedInsight(
             title: title,
             summary: summary,
-            chineseTitle: chineseTitle,
-            chineseSummary: chineseSummary,
             originalTitle: originalTitle,
             sourceURL: sourceURL,
             sourceName: sourceName

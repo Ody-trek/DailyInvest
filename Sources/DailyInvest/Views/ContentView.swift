@@ -7,17 +7,17 @@ struct ContentView: View {
         TabView {
             TodayView(viewModel: viewModel)
                 .tabItem {
-                    Label("Today", systemImage: "star.fill")
+                    Label("今日", systemImage: "star.fill")
                 }
 
             HistoryView(viewModel: viewModel)
                 .tabItem {
-                    Label("History", systemImage: "clock.fill")
+                    Label("历史", systemImage: "clock.fill")
                 }
 
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
+                    Label("设置", systemImage: "gearshape.fill")
                 }
         }
     }

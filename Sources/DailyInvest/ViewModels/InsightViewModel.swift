@@ -35,18 +35,16 @@ class InsightViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            loadingStep = "Fetching today's financial news..."
+            loadingStep = "正在获取今日财经新闻..."
             let articles = try await newsService.fetchInvestmentNews(apiKey: newsAPIKey)
 
-            loadingStep = "Claude is selecting the best insight..."
+            loadingStep = "Claude 正在分析最有价值的内容..."
             let curated = try await claudeService.curateInsight(from: articles, apiKey: claudeAPIKey)
 
             let insight = InvestInsight(
                 date: store.todayString(),
                 title: curated.title,
                 summary: curated.summary,
-                chineseTitle: curated.chineseTitle,
-                chineseSummary: curated.chineseSummary,
                 originalTitle: curated.originalTitle,
                 sourceURL: curated.sourceURL,
                 sourceName: curated.sourceName
